@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalkulator Renovasi</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    label, input {
+      display: block;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px;
+      background: maroon;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #hasil {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Kalkulator Biaya Renovasi</h2>
+  <label>Panjang Bangunan (meter):</label>
+  <input id="panjang" type="number" />
+  
+  <label>Lebar Bangunan (meter):</label>
+  <input id="lebar" type="number" />
+  
+  <label>Jumlah Lantai:</label>
+  <input id="lantai" type="number" />
+  
+  <button onclick="hitung()">Hitung Biaya</button>
+
+  <div id="hasil"></div>
+
+  <script>
+    function hitung() {
+      const panjang = parseFloat(document.getElementById("panjang").value);
+      const lebar = parseFloat(document.getElementById("lebar").value);
+      const lantai = parseFloat(document.getElementById("lantai").value);
+      const hargaPerm2 = 2500000;
+
+      const luas = panjang * lebar * lantai;
+      const total = luas * hargaPerm2;
+
+      document.getElementById("hasil").innerHTML = 
+        `Luas: ${luas} m²<br>Total Biaya: <b>Rp ${total.toLocaleString("id-ID")}</b>`;
+    }
+  </script>
+</body>
+</html>
