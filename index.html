@@ -1,63 +1,63 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Kalkulator Renovasi</title>
+  <script src="https://cdn.jsdelivr.net/npm/tabletop@1.5.4/tabletop.min.js"></script>
   <style>
-    body {
-      font-family: sans-serif;
-      max-width: 500px;
-      margin: 40px auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-    }
-    label, input {
-      display: block;
-      margin: 10px 0;
-    }
-    button {
-      padding: 10px;
-      background: maroon;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-    #hasil {
-      margin-top: 20px;
-      font-weight: bold;
-    }
+    body { font-family: sans-serif; max-width: 500px; margin: 2rem auto; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; }
+    label, select, input { display: block; margin-top: 1rem; width: 100%; }
+    button { margin-top: 1rem; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    h3 { margin-top: 2rem; }
   </style>
 </head>
 <body>
-  <h2>Kalkulator Biaya Renovasi</h2>
-  <label>Panjang Bangunan (meter):</label>
-  <input id="panjang" type="number" />
-  
-  <label>Lebar Bangunan (meter):</label>
-  <input id="lebar" type="number" />
-  
-  <label>Jumlah Lantai:</label>
-  <input id="lantai" type="number" />
-  
+  <h2>Kalkulator Renovasi Sederhana</h2>
+  <label for="luas">Masukkan luas area (m2):</label>
+  <input type="number" id="luas" placeholder="Contoh: 10">
+
+  <label for="komponen">Pilih komponen renovasi:</label>
+  <select id="komponen"></select>
+
   <button onclick="hitung()">Hitung Biaya</button>
 
-  <div id="hasil"></div>
+  <h3 id="hasil"></h3>
 
   <script>
-    function hitung() {
-      const panjang = parseFloat(document.getElementById("panjang").value);
-      const lebar = parseFloat(document.getElementById("lebar").value);
-      const lantai = parseFloat(document.getElementById("lantai").value);
-      const hargaPerm2 = 2500000;
+    let dataKomponen = {};
 
-      const luas = panjang * lebar * lantai;
-      const total = luas * hargaPerm2;
-
-      document.getElementById("hasil").innerHTML = 
-        `Luas: ${luas} m²<br>Total Biaya: <b>Rp ${total.toLocaleString("id-ID")}</b>`;
+    function init() {
+      Tabletop.init({
+        key: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS8_7AaN0jGtR6zEnzxHMO7Xa7wnLu8G0TWIcv0NZJ1g-QI9Dgpjnt5h3tWWRcC88CXhiTOYoYDM7JJ/pub?output=csv',
+        callback: function(data) {
+          const dropdown = document.getElementById('komponen');
+          data.forEach(item => {
+            const nama = item.Komponen || item.komponen;
+            const harga = parseInt(item.Harga_per_m2 || item.harga_per_m2 || 0);
+            dataKomponen[nama] = harga;
+            const option = document.createElement('option');
+            option.value = nama;
+            option.textContent = `${nama} - Rp ${harga.toLocaleString()}`;
+            dropdown.appendChild(option);
+          });
+        },
+        simpleSheet: true
+      });
     }
+
+    function hitung() {
+      const luas = parseFloat(document.getElementById('luas').value);
+      const komponen = document.getElementById('komponen').value;
+      if (!luas || !komponen) {
+        alert("Isi semua form dulu ya bre");
+        return;
+      }
+      const harga = dataKomponen[komponen];
+      const total = harga * luas;
+      document.getElementById('hasil').textContent = `Total estimasi biaya: Rp ${total.toLocaleString()}`;
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
